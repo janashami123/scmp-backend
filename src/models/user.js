@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         U_Hash: {
             type: DataTypes.STRING,
+            
         },
         admin: {
             type: DataTypes.BOOLEAN,
