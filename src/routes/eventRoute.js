@@ -1,0 +1,10 @@
+const express = require("express");
+const router = express.Router();
+const eventController  = require("../controllers/eventController");
+router.post("/login", eventController.login);
+router.post("/register", eventController.register);
+router.put("/edit/:id", eventController.editUser);
+router.delete("/delete/:id", eventController.deleteUser);
+router.get("/:id", eventController.getUser);
+router.get("/", eventController.getAllUsers);
+module.exports = router;

@@ -1,18 +1,16 @@
 const jwt = require("jsonwebtoken");
-const bcrypt= require ("bcryptjs");
-const User = require('../models/').user
+const bcrypt = require("bcryptjs");
+const User = require("../models/").user;
 // Generate JWT
 const generateToken = (id) => {
-  console.log(process.env.SECRET,)
+  console.log(process.env.SECRET);
   return jwt.sign({ id }, process.env.SECRET, {
     expiresIn: "1d",
   });
 };
 
 class UserController {
-
-
-//Get all users  
+  //Get all users
   async getAllUsers(req, res) {
     try {
       const users = await User.findAll({}, { password: 0 });
@@ -30,7 +28,7 @@ class UserController {
       });
     }
   }
-// Get user by id
+  // Get user by id
   async getUser(req, res) {
     const { id } = req.params;
     try {
@@ -56,11 +54,11 @@ class UserController {
       });
     }
   }
-// Edit User
+  // Edit User
   async editUser(req, res) {
     const { id } = req.params;
     const { U_Name, U_Hash, admin, auth } = req.body;
-    if ( !U_Name, !U_Hash, !admin, !auth ) {
+    if ((!U_Name, !U_Hash, !admin, !auth)) {
       return res.status(400).json({
         status: 400,
         success: false,
@@ -80,7 +78,7 @@ class UserController {
       const hashPass = await bcrypt.hash(U_Hash, salt);
       const result = await user.update({
         U_Name,
-        admin ,
+        admin,
         U_Hash: hashPass,
         auth,
       });
@@ -98,7 +96,7 @@ class UserController {
       });
     }
   }
-// Delete user
+  // Delete user
   async deleteUser(req, res) {
     const { id } = req.params;
     try {
@@ -125,10 +123,10 @@ class UserController {
       });
     }
   }
-//Register new user
+  //Register new user
   async register(req, res) {
     const { U_Name, U_Hash, admin, auth } = req.body;
-    if ( !U_Name, !U_Hash, !admin, !auth ) {
+    if ((!U_Name, !U_Hash, !admin, !auth)) {
       return res.status(400).json({
         status: 400,
         success: false,
@@ -136,7 +134,7 @@ class UserController {
       });
     }
     try {
-      const userExists = await User.findOne({ where: { U_Name: U_Name } })
+      const userExists = await User.findOne({ where: { U_Name: U_Name } });
       if (userExists) {
         return res.status(403).json({
           status: 403,
@@ -149,10 +147,10 @@ class UserController {
       await User.create({
         U_Name,
         admin,
-        U_Hash:hashPass,
+        U_Hash: hashPass,
         auth,
       });
-      console.log(User)
+      console.log(User);
       return res.status(201).json({
         status: 201,
         success: true,
@@ -167,14 +165,14 @@ class UserController {
       });
     }
   }
-// Login user
+  // Login user
   async login(req, res) {
     const { U_Name, U_Hash } = req.body;
     try {
       const user = await User.findOne({ U_Name: U_Name });
-      console.log(user.id)
-      console.log(bcrypt.compare(U_Hash, user.U_Hash))
-      if (user && ( bcrypt.compare(U_Hash, user.U_Hash))) {
+      console.log(user.id);
+      console.log(bcrypt.compare(U_Hash, user.U_Hash));
+      if (user && bcrypt.compare(U_Hash, user.U_Hash)) {
         return res.status(200).json({
           status: 200,
           success: true,
@@ -184,7 +182,6 @@ class UserController {
           },
           token: generateToken(user.id),
         });
-
       }
       return res.status(401).json({
         status: 401,
@@ -203,4 +200,4 @@ class UserController {
 }
 
 const userController = new UserController();
-module.exports=userController;
+module.exports = userController;

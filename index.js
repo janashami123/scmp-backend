@@ -15,4 +15,5 @@ dotenv.config();
 
 app.use(cors());
 app.use("/api/user", User);
+app.use("/api/event", User);
 app.listen(PORT, console.log(`Server started on port ${PORT}`))

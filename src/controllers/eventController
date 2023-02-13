@@ -1,0 +1,164 @@
+const Event = require("../models/").event;
+
+class EventController {
+  // Get all events
+  async getAllEvents(req, res) {
+    try {
+      const events = await Event.findAll({});
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        data: events,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  // Get a specific event
+
+  async getEvent(req, res) {
+    let { id } = req.params;
+    try {
+      const event = await Event.findByPk(id);
+      if (!event)
+        return res.status(404).json({
+          status: 404,
+          success: false,
+          message: `Event with id ${id} not found`,
+        });
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        data: event,
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 500,
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  // Add Event
+
+  async addEvent(req, res) {
+    const { ETitle, EBrief, EParagraph, EPhotos, ECover, EDate, ELink } =
+      req.body;
+
+    if (
+      !ETitle ||
+      !EBrief ||
+      !EParagraph ||
+      !EPhotos ||
+      !ECover ||
+      !EDate ||
+      !ELink
+    ) {
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        body: req.body,
+        message: "All event info must be provided",
+      });
+    }
+
+    const event = new Event({
+      ETitle,
+      EBrief,
+      EParagraph,
+      EPhotos,
+      ECover,
+      EDate,
+      ELink,
+    });
+    try {
+      await event.save();
+      return res.status(201).json({
+        status: 201,
+        success: true,
+        message: "event added successfully",
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  // Update an Event
+
+  async editEvent(req, res) {
+    const { id } = req.params;
+    const { ETitle, EBrief, EParagraph, EPhotos, ECover, EDate, ELink } =
+      req.body;
+    try {
+      const event = await Event.findByPk(id);
+      if (!event) {
+        return res.status(404).json({
+          status: 404,
+          success: false,
+          message: `Event with id ${id} does not exist`,
+        });
+      }
+      const result = await event.update({
+        ETitle,
+        EBrief,
+        EParagraph,
+        EPhotos,
+        ECover,
+        EDate,
+        ELink,
+      });
+      return res.status(200).json({
+        status: 200,
+        success: true,
+        data: `Event with id ${id} updated successfully`,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+
+  // Delete Event
+
+  async deleteEvent(req, res) {
+    const { id } = req.params;
+    try {
+      const event = await Event.findByPk(id);
+      if (!event) {
+        return res.status(404).json({
+          status: 404,
+          success: false,
+          message: `Event with id ${id} does not exist`,
+        });
+      }
+      const result = await event.destroy();
+      return res.status(200).json({
+        id: id,
+        status: 200,
+        success: true,
+        message: `Event with id ${id} deleted successfully`,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        status: 500,
+        success: false,
+        message: error.message,
+      });
+    }
+  }
+}
+const eventController = new EventController();
+module.exports = eventController;
